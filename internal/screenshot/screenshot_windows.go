@@ -1,10 +1,11 @@
-package main
+//go:build windows
+// +build windows
+
+package screenshot
 
 import (
 	"fmt"
 	"image"
-	"image/png"
-	"os"
 
 	"github.com/kbinani/screenshot"
 )
@@ -25,20 +26,4 @@ func CaptureScreen() (image.Image, error) {
 	}
 
 	return img, nil
-}
-
-// SaveScreenshot guarda la imagen en un archivo
-func SaveScreenshot(img image.Image, filepath string) error {
-	file, err := os.Create(filepath)
-	if err != nil {
-		return fmt.Errorf("error creando archivo: %w", err)
-	}
-	defer file.Close()
-
-	err = png.Encode(file, img)
-	if err != nil {
-		return fmt.Errorf("error guardando imagen: %w", err)
-	}
-
-	return nil
 }

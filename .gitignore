@@ -37,3 +37,7 @@ go.work
 # Sistema operativo
 .DS_Store
 Thumbs.db
+
+# Exclude builds
+builds/
+

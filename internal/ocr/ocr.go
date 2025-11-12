@@ -1,18 +1,20 @@
-package main
+package ocr
 
 import (
 	"bytes"
 	"fmt"
 	"os/exec"
 	"strings"
+
+	"kahoot-assistant/internal/config"
 )
 
 // ExtractTextFromImage extrae texto de una imagen usando Tesseract OCR
-func ExtractTextFromImage(imagePath string, config *Config) (string, error) {
+func ExtractTextFromImage(imagePath string, cfg *config.Config) (string, error) {
 	// Determinar el path de tesseract
 	tesseractCmd := "tesseract"
-	if config.OCR.TesseractPath != "" {
-		tesseractCmd = config.OCR.TesseractPath
+	if cfg.OCR.TesseractPath != "" {
+		tesseractCmd = cfg.OCR.TesseractPath
 	}
 
 	// Construir el comando
@@ -20,7 +22,7 @@ func ExtractTextFromImage(imagePath string, config *Config) (string, error) {
 	args := []string{
 		imagePath,
 		"stdout", // Salida a stdout
-		"-l", config.OCR.Language,
+		"-l", cfg.OCR.Language,
 	}
 
 	cmd := exec.Command(tesseractCmd, args...)

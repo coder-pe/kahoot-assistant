@@ -1,19 +1,21 @@
-package main
+package logger
 
 import (
 	"fmt"
 	"os"
 	"time"
+
+	"kahoot-assistant/internal/config"
 )
 
 // LogQuestionAnswer guarda la pregunta y respuesta en el archivo de log
-func LogQuestionAnswer(question, answer string, config *Config) error {
-	if !config.Output.LogFile {
+func LogQuestionAnswer(question, answer string, cfg *config.Config) error {
+	if !cfg.Output.LogFile {
 		return nil // Logging deshabilitado
 	}
 
 	// Abrir o crear el archivo de log
-	file, err := os.OpenFile(config.LogFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	file, err := os.OpenFile(cfg.LogFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("error abriendo archivo de log: %w", err)
 	}

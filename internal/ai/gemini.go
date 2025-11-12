@@ -1,20 +1,22 @@
-package main
+package ai
 
 import (
 	"context"
 	"fmt"
 	"time"
 
+	"kahoot-assistant/internal/config"
+
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
 )
 
 // AskGemini envía una pregunta a Gemini API y retorna la respuesta
-func AskGemini(question string, config *Config) (string, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(config.Timeouts.GeminiTimeout)*time.Second)
+func AskGemini(question string, cfg *config.Config) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(cfg.Timeouts.GeminiTimeout)*time.Second)
 	defer cancel()
 
-	client, err := genai.NewClient(ctx, option.WithAPIKey(config.GeminiAPIKey))
+	client, err := genai.NewClient(ctx, option.WithAPIKey(cfg.GeminiAPIKey))
 	if err != nil {
 		return "", fmt.Errorf("error creando cliente Gemini: %w", err)
 	}
