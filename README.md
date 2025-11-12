@@ -1,6 +1,6 @@
 # Kahoot Assistant
 
-Programa multi-plataforma en Go que captura pantalla, extrae texto con OCR, consulta a Gemini AI y envía respuestas por email y/o consola.
+Programa multi-plataforma en Go que captura pantalla o portapapeles, extrae texto con OCR (si es imagen), consulta a Gemini AI y envía respuestas por email y/o consola.
 
 ## 🚀 Inicio Rápido
 
@@ -65,9 +65,12 @@ Toda la documentación está en el directorio `docs/`:
 
 ## 🎯 Características
 
-- ✅ Captura de pantalla (automática en Windows, manual en macOS/Linux)
-- ✅ OCR con Tesseract
-- ✅ Integración con Gemini AI
+- ✅ **Doble modo de captura:**
+  - **Screenshot**: Captura de pantalla (Print Screen en Windows, Cmd+Shift+4 en macOS)
+  - **Clipboard**: Lectura de portapapeles con Ctrl+C (Windows/Linux) o Cmd+C (macOS)
+- ✅ Soporta texto e imágenes en el portapapeles
+- ✅ OCR con Tesseract para imágenes
+- ✅ Integración con Gemini AI (modelo configurable)
 - ✅ Respuestas en consola
 - ✅ Envío opcional por Gmail
 - ✅ Sistema de logging
@@ -83,7 +86,8 @@ kahoot-assistant/
 ├── internal/                # Paquetes internos
 │   ├── config/              # Configuración
 │   ├── screenshot/          # Captura de pantalla
-│   ├── keyboard/            # Detección de teclas
+│   ├── clipboard/           # Lectura de portapapeles (NUEVO)
+│   ├── keyboard/            # Detección de teclas (Print Screen / Ctrl+C)
 │   ├── ocr/                 # OCR con Tesseract
 │   ├── ai/                  # Cliente Gemini
 │   ├── notification/        # Envío de emails
@@ -103,21 +107,33 @@ kahoot-assistant/
 ```cmd
 builds\kahoot-assistant-windows-amd64.exe
 ```
-Presiona **Print Screen** cuando veas una pregunta.
+**Dos modos disponibles:**
+- **Modo Screenshot**: Presiona **Print Screen** para capturar la pantalla
+- **Modo Clipboard**: Copia texto/imagen con **Ctrl+C** y el programa procesará automáticamente
 
 ### macOS
 ```bash
 ./builds/kahoot-assistant-darwin-arm64
 ```
-1. Toma screenshot (Cmd+Shift+3/4)
-2. Presiona **Enter**
+**Elige tu modo de captura:**
+1. **Screenshot (s)**:
+   - Toma screenshot con Cmd+Shift+4 (área) o Cmd+Shift+3 (pantalla)
+   - Escribe `s` y presiona Enter
+2. **Clipboard (c)**:
+   - Copia el texto/imagen con Cmd+C
+   - Escribe `c` y presiona Enter
 
 ### Linux
 ```bash
 ./builds/kahoot-assistant-linux-amd64
 ```
-1. Toma screenshot (Print Screen)
-2. Presiona **Enter**
+**Elige tu modo de captura:**
+1. **Screenshot (s)**:
+   - Toma screenshot con Print Screen
+   - Escribe `s` y presiona Enter
+2. **Clipboard (c)**:
+   - Copia el texto/imagen con Ctrl+C
+   - Escribe `c` y presiona Enter
 
 ## 🔗 Recursos
 
@@ -135,5 +151,9 @@ Código abierto para uso educativo. Úsalo responsablemente.
 
 ---
 
-**Versión:** 1.0.0 Multi-Plataforma
+**Versión:** 2.0.0 Multi-Plataforma + Clipboard
 **Estado:** ✅ Listo para producción
+**Novedades v2.0.0:**
+- ✨ Soporte para portapapeles (Ctrl+C / Cmd+C)
+- ✨ Detección automática de texto e imágenes en clipboard
+- ✨ Procesamiento directo de texto sin necesidad de OCR

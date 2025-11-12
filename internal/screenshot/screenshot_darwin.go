@@ -12,7 +12,8 @@ import (
 	"strings"
 	"time"
 
-	_ "image/png"
+	_ "image/jpeg" // Soporte para JPEG
+	_ "image/png"  // Soporte para PNG
 )
 
 // GetLatestScreenshot encuentra el screenshot más reciente en el escritorio de macOS
@@ -46,24 +47,51 @@ func GetLatestScreenshot() (string, error) {
 		}
 
 		name := file.Name()
-		if (strings.HasPrefix(name, "Screenshot") || strings.HasPrefix(name, "Screen Shot")) &&
-			strings.HasSuffix(strings.ToLower(name), ".png") {
+		nameLower := strings.ToLower(name)
 
-			fullPath := filepath.Join(desktopPath, name)
-			info, err := os.Stat(fullPath)
-			if err != nil {
-				continue
-			}
+		// Buscar archivos de imagen (png, jpg, jpeg, heic)
+		// Acepta: Screenshot, Screen Shot, Captura, captura, o cualquier .png/.jpg/.heic
+		isImageFile := strings.HasSuffix(nameLower, ".png") ||
+			strings.HasSuffix(nameLower, ".jpg") ||
+			strings.HasSuffix(nameLower, ".jpeg") ||
+			strings.HasSuffix(nameLower, ".heic")
 
-			screenshots = append(screenshots, fileWithTime{
-				path:    fullPath,
-				modTime: info.ModTime(),
-			})
+		if !isImageFile {
+			continue
+		}
+
+		// Priorizar archivos con nombres relacionados a screenshots
+		isScreenshotLike := strings.Contains(nameLower, "screenshot") ||
+			strings.Contains(nameLower, "screen shot") ||
+			strings.Contains(nameLower, "captura") ||
+			strings.Contains(nameLower, "capture") ||
+			strings.Contains(nameLower, "shot")
+
+		// Si es una imagen, agregarla a la lista
+		fullPath := filepath.Join(desktopPath, name)
+		info, err := os.Stat(fullPath)
+		if err != nil {
+			continue
+		}
+
+		// Solo considerar archivos modificados en los últimos 10 minutos
+		if time.Since(info.ModTime()) > 10*time.Minute {
+			continue
+		}
+
+		screenshots = append(screenshots, fileWithTime{
+			path:    fullPath,
+			modTime: info.ModTime(),
+		})
+
+		// Informar si encontramos un archivo
+		if isScreenshotLike {
+			fmt.Printf("   Encontrado: %s (hace %s)\n", name, time.Since(info.ModTime()).Round(time.Second))
 		}
 	}
 
 	if len(screenshots) == 0 {
-		return "", fmt.Errorf("no se encontraron screenshots en el escritorio.\nAsegúrate de tomar un screenshot con Cmd+Shift+3 o Cmd+Shift+4")
+		return "", fmt.Errorf("no se encontraron imágenes recientes en el escritorio.\n\nBusqué archivos .png, .jpg, .jpeg, .heic modificados en los últimos 10 minutos.\n\nAsegúrate de:\n  1. Tomar screenshot con Cmd+Shift+3 o Cmd+Shift+4\n  2. O convertir el .heic a .png\n  3. Presionar Enter dentro de 10 minutos")
 	}
 
 	// Ordenar por tiempo de modificación (más reciente primero)
@@ -71,14 +99,12 @@ func GetLatestScreenshot() (string, error) {
 		return screenshots[i].modTime.After(screenshots[j].modTime)
 	})
 
-	// Verificar que el screenshot sea reciente (últimos 5 minutos)
+	// El más reciente ya está primero gracias al sort
 	latestScreenshot := screenshots[0]
-	if time.Since(latestScreenshot.modTime) > 5*time.Minute {
-		return "", fmt.Errorf("el screenshot más reciente tiene más de 5 minutos.\nToma un nuevo screenshot y presiona Enter")
-	}
 
-	fmt.Printf("   Usando screenshot: %s\n", filepath.Base(latestScreenshot.path))
-	fmt.Printf("   Tomado hace: %s\n", time.Since(latestScreenshot.modTime).Round(time.Second))
+	fmt.Printf("   ✓ Usando imagen: %s\n", filepath.Base(latestScreenshot.path))
+	fmt.Printf("   ✓ Modificada hace: %s\n", time.Since(latestScreenshot.modTime).Round(time.Second))
+	fmt.Printf("   ✓ Ubicación: %s\n", latestScreenshot.path)
 
 	return latestScreenshot.path, nil
 }

@@ -22,8 +22,8 @@ func AskGemini(question string, cfg *config.Config) (string, error) {
 	}
 	defer client.Close()
 
-	// Usar el modelo Gemini Pro
-	model := client.GenerativeModel("gemini-pro")
+	// Usar el modelo configurado (por defecto: gemini-1.5-flash)
+	model := client.GenerativeModel(cfg.GeminiModel)
 
 	// Configurar el prompt para responder preguntas de Kahoot
 	prompt := fmt.Sprintf(`Eres un asistente que responde preguntas de Kahoot en inglés.

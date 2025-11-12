@@ -5,6 +5,11 @@
 # Obtén tu token desde: https://makersuite.google.com/app/apikey
 gemini_api_key: "TU_TOKEN_AQUI"
 
+# Modelo de Gemini a usar (opcional, por defecto: gemini-2.5-flash)
+# Modelos disponibles: gemini-2.5-flash, gemini-2.5-pro
+# Verifica modelos disponibles en: https://ai.google.dev/models/gemini
+gemini_model: "gemini-2.5-flash"
+
 # Configuración de correo Gmail (opcional)
 email:
   enabled: true  # true para habilitar envío de emails, false para desactivar

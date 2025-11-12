@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	GeminiAPIKey string `yaml:"gemini_api_key"`
-	Email        struct {
+	GeminiAPIKey   string `yaml:"gemini_api_key"`
+	GeminiModel    string `yaml:"gemini_model"`
+	Email          struct {
 		Enabled  bool   `yaml:"enabled"`
 		SMTPHost string `yaml:"smtp_host"`
 		SMTPPort int    `yaml:"smtp_port"`
@@ -48,6 +49,11 @@ func LoadConfig(path string) (*Config, error) {
 	// Validaciones básicas
 	if config.GeminiAPIKey == "" || config.GeminiAPIKey == "TU_TOKEN_AQUI" {
 		return nil, fmt.Errorf("debes configurar gemini_api_key en config.yaml")
+	}
+
+	// Valor por defecto para el modelo de Gemini
+	if config.GeminiModel == "" {
+		config.GeminiModel = "gemini-1.5-flash" // Modelo por defecto
 	}
 
 	if config.Output.Email && config.Email.Enabled {

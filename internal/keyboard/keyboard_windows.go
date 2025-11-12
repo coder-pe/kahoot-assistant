@@ -19,6 +19,8 @@ var (
 
 const (
 	VK_SNAPSHOT = 0x2C // Print Screen key
+	VK_CONTROL  = 0x11 // Ctrl key
+	VK_C        = 0x43 // C key
 )
 
 // GetAsyncKeyState verifica el estado de una tecla
@@ -26,6 +28,14 @@ func GetAsyncKeyState(vKey int) uint16 {
 	ret, _, _ := procGetAsyncKeyState.Call(uintptr(vKey))
 	return uint16(ret)
 }
+
+// TriggerType indica qué tipo de captura realizar
+type TriggerType string
+
+const (
+	TriggerScreenshot TriggerType = "screenshot"
+	TriggerClipboard  TriggerType = "clipboard"
+)
 
 // WaitForPrintScreen espera hasta que se presione la tecla Print Screen
 func WaitForPrintScreen() error {
@@ -47,6 +57,44 @@ func WaitForPrintScreen() error {
 		}
 
 		previousState = currentState
+
+		// Pequeña pausa para no consumir 100% CPU
+		time.Sleep(50 * time.Millisecond)
+	}
+}
+
+// WaitForTrigger espera hasta que se presione Print Screen o Ctrl+C
+func WaitForTrigger() (TriggerType, error) {
+	fmt.Println("Esperando entrada:")
+	fmt.Println("  - Print Screen: Captura pantalla y procesa con OCR")
+	fmt.Println("  - Ctrl+C: Copia texto/imagen y procesa desde portapapeles")
+
+	// Estados anteriores de las teclas
+	var previousPrintScreen uint16 = 0
+	var previousC uint16 = 0
+
+	for {
+		// Verificar Print Screen
+		currentPrintScreen := GetAsyncKeyState(VK_SNAPSHOT)
+		if (currentPrintScreen&0x8000) != 0 && (previousPrintScreen&0x8000) == 0 {
+			fmt.Println("\n✓ Print Screen detectado - Capturando pantalla...")
+			return TriggerScreenshot, nil
+		}
+		previousPrintScreen = currentPrintScreen
+
+		// Verificar Ctrl+C
+		currentCtrl := GetAsyncKeyState(VK_CONTROL)
+		currentC := GetAsyncKeyState(VK_C)
+
+		// Si Ctrl está presionado y C se acaba de presionar
+		if (currentCtrl&0x8000) != 0 && (currentC&0x8000) != 0 && (previousC&0x8000) == 0 {
+			fmt.Println("\n✓ Ctrl+C detectado - Leyendo portapapeles...")
+			// Esperar un momento para que el clipboard se actualice
+			time.Sleep(100 * time.Millisecond)
+			return TriggerClipboard, nil
+		}
+
+		previousC = currentC
 
 		// Pequeña pausa para no consumir 100% CPU
 		time.Sleep(50 * time.Millisecond)
