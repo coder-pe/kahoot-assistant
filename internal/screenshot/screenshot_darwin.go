@@ -25,6 +25,8 @@ func GetLatestScreenshot() (string, error) {
 	// En macOS, los screenshots se guardan en el escritorio por defecto
 	desktopPath := filepath.Join(homeDir, "Desktop")
 
+	fmt.Println("Buscando screenshots en el escritorio...", desktopPath)
+
 	// Buscar archivos de screenshot
 	files, err := os.ReadDir(desktopPath)
 	if err != nil {
