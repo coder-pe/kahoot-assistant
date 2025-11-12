@@ -1,0 +1,36 @@
+# Archivo de ejemplo de configuración para Kahoot Assistant
+# Copia este archivo como config.yaml y completa tus datos
+
+# Token de Gemini API (obligatorio)
+# Obtén tu token desde: https://makersuite.google.com/app/apikey
+gemini_api_key: "TU_TOKEN_AQUI"
+
+# Configuración de correo Gmail (opcional)
+email:
+  enabled: true  # true para habilitar envío de emails, false para desactivar
+  smtp_host: "smtp.gmail.com"
+  smtp_port: 587
+  from: "tu_email@gmail.com"  # Tu dirección de Gmail
+  password: "tu_app_password"  # App Password de 16 caracteres (NO tu contraseña normal)
+  to: "destino@gmail.com"      # Email donde recibirás las respuestas
+
+# Configuración de salida
+output:
+  console: true  # Mostrar resultados en la consola/CMD
+  email: true    # Enviar resultados por email (requiere email.enabled: true)
+  log_file: true # Guardar resultados en archivo de log
+
+# Configuración de OCR (Tesseract)
+ocr:
+  language: "eng"  # Idioma para OCR: eng (inglés), spa (español), fra (francés), etc.
+  tesseract_path: ""  # Ruta de Tesseract (dejar vacío para usar PATH del sistema)
+                      # Ejemplo Windows: "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+
+# Configuración de timeouts (en segundos)
+timeouts:
+  max_processing_time: 15  # Tiempo máximo total de procesamiento
+  gemini_timeout: 10       # Timeout para consulta a Gemini API
+  email_timeout: 5         # Timeout para envío de email
+
+# Archivo de log
+log_file_path: "kahoot_log.txt"  # Ruta donde se guardarán los logs

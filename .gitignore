@@ -1,0 +1,39 @@
+# Archivos de configuración con datos sensibles
+config.yaml
+
+# Binarios
+*.exe
+kahoot-assistant
+kahoot-assistant.exe
+
+# Archivos de log
+*.log
+*.txt
+kahoot_log.txt
+
+# Archivos temporales
+*.tmp
+*.temp
+
+# Capturas de pantalla temporales
+screenshot_*.png
+
+# Go
+*.o
+*.a
+*.so
+*.dylib
+*.test
+*.out
+go.work
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
